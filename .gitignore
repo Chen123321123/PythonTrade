@@ -1,12 +1,30 @@
 # Python
 __pycache__/
 *.py[cod]
+*.egg-info/
 .venv/
 .env
-# VSCode
+
+# 项目数据（Parquet/CSV/……）
+/data/
+
+# VS Code
 .vscode/
+
+# PyCharm
+.idea/
+
 # Jupyter
 .ipynb_checkpoints/
-# Data files
-*.csv
-*.parquet
+
+# 测试缓存
+.pytest_cache/
+
+# 日志和覆盖率
+*.log
+.coverage
+htmlcov/
+
+# 系统文件
+.DS_Store
+Thumbs.db
