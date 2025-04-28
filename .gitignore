@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+# VSCode
+.vscode/
+# Jupyter
+.ipynb_checkpoints/
+# Data files
+*.csv
+*.parquet
