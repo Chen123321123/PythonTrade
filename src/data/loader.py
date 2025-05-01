@@ -1,31 +1,42 @@
-# File: pythontrade/src/data/loader.py
+# File: src/data/loader.py
 
+import os
 import ccxt
+import pandas as pd
 from .parser import parse_ohlcv
-from src.config import START_DATE, DATA_DIR
+from config import START_DATE, DATA_DIR
 
-def fetch_ohlcv(symbol: str, timeframe: str = "1h"):
+_exchange = ccxt.binance({
+    "enableRateLimit": True,
+    "options": {"fetchCurrencies": False},
+})
+
+def fetch_ohlcv(symbol: str, timeframe: str = "1h",
+                limit: int = None, since: int = None) -> pd.DataFrame:
     """
-    拉取指定交易对的 OHLCV（K 线）数据，解析成 DataFrame，
-    并以 <symbol>_<timeframe>.parquet 的格式落盘到 DATA_DIR。
+    拉取 OHLCV，返回 DataFrame。
     """
-    # 1. 初始化交易所实例，只拿公共行情，不带任何身份验证
-    ex = ccxt.binance({
-        "enableRateLimit": True,
-        # 禁止自动拉私有接口，加快初始化
-        "options": {"fetchCurrencies": False},
-    })
-
-    # 2. 转换起始时间，并拉数据
-    since = ex.parse8601(f"{START_DATE}T00:00:00Z")
-    raw   = ex.fetch_ohlcv(symbol, timeframe, since=since)
-
-    # 3. 解析成 DataFrame
-    df = parse_ohlcv(raw)
-
-    # 4. 生成合法文件名，写入 parquet
-    safe_symbol = symbol.replace("/", "_")
-    path = DATA_DIR / f"{safe_symbol}_{timeframe}.parquet"
+    if since is None:
+        since = _exchange.parse8601(f"{START_DATE}T00:00:00Z")
+    bars = _exchange.fetch_ohlcv(symbol, timeframe,
+                                 since=since, limit=limit)
+    df = parse_ohlcv(bars)
+    # 同时把 parquet 落到 DATA_DIR
+    safe = symbol.replace("/", "_")
+    path = DATA_DIR / f"{safe}_{timeframe}.parquet"
+    os.makedirs(path.parent, exist_ok=True)
     df.to_parquet(path)
-
     return df
+
+def fetch_and_save_csv(symbol: str, timeframe: str = "1h",
+                       limit: int = None, since: int = None,
+                       out_dir: str = ".") -> str:
+    """
+    拉取 OHLCV 并保存为 CSV。返回文件路径。
+    """
+    df = fetch_ohlcv(symbol, timeframe, limit=limit, since=since)
+    fn = f"{symbol.replace('/', '_')}_{timeframe}.csv"
+    out = os.path.join(out_dir, fn)
+    os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+    df.to_csv(out)
+    return out
