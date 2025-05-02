@@ -16,7 +16,7 @@ DATA_DIR = PROJECT_ROOT / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # 交易所和 API（如果不拉私有接口，可留空）
-EXCHANGE   = "binance"
+EXCHANGE = "kraken"
 API_KEY    = "<your_api_key>"
 API_SECRET = "<your_api_secret>"
 

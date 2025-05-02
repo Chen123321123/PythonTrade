@@ -24,34 +24,34 @@ python scripts/fetch_csv.py \
   #布林轨策略（全仓）
   python scripts/run_backtest.py \
   --mode backtest \
-  --symbols BTC/USDT,ETH/USDT \
+  --symbols BTC/USDT \
   --timeframe 4h \
-  --limit 300 \
+  --limit 1000 \
   --last_n 300 \
   --strategy bollinger_narrow \
   --window 30 \
   --mult 2.0 \
   --stop_loss 0.05 \
   --take_profit 0.10 \
-  --trailing_ma ma \
   --position_size 1.0 \
-  --out_dir charts/bollinger_full
+  --out_dir charts/bollinger_narrow_backtest
+
 
   #布林轨策略（半仓）
   python scripts/run_backtest.py \
   --mode backtest \
-  --symbols BTC/USDT,ETH/USDT \
+  --symbols BTC/USDT \
   --timeframe 4h \
-  --limit 300 \
+  --limit 1000 \
   --last_n 300 \
   --strategy bollinger_narrow \
   --window 30 \
   --mult 2.0 \
   --stop_loss 0.05 \
   --take_profit 0.10 \
-  --trailing_ma ma \
   --position_size 0.5 \
-  --out_dir charts/bollinger_full
+  --out_dir charts/bollinger_narrow_backtest
+
 
 
   #MA15策略（全仓）
@@ -89,36 +89,40 @@ python scripts/fetch_csv.py \
   --mode backtest \
   --symbols BTC/USDT \
   --timeframe 4h \
-  --limit 300 \
+  --limit 1000 \
   --last_n 300 \
   --strategy follow_through \
   --children bollinger_narrow,ma15_breakout \
-  --comb_mode and \
-  --window 30 --mult 2.0 \
+  --comb_mode majority \
+  --window 30 \
+  --mult 2.0 \
   --period 15 \
   --stop_loss 0.05 \
   --take_profit 0.10 \
-  --trailing_ma ma \
   --position_size 1.0 \
-  --out_dir charts/ft_and_full
+  --trailing_ma ma \
+  --out_dir charts/ft_backtest
+
 
   #结合策略（半仓）
   python scripts/run_backtest.py \
   --mode backtest \
   --symbols BTC/USDT \
   --timeframe 4h \
-  --limit 300 \
+  --limit 1000 \
   --last_n 300 \
   --strategy follow_through \
   --children bollinger_narrow,ma15_breakout \
-  --comb_mode and \
-  --window 30 --mult 2.0 \
+  --comb_mode majority \
+  --window 30 \
+  --mult 2.0 \
   --period 15 \
   --stop_loss 0.05 \
   --take_profit 0.10 \
-  --trailing_ma ma \
   --position_size 0.5 \
-  --out_dir charts/ft_and_full
+  --trailing_ma ma \
+  --out_dir charts/ft_backtest
+
 
 
     #画图
