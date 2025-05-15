@@ -1,0 +1,5 @@
+out_ref
+out_ref/BTC_USDT_backtest.png
+out_ref/BTC_USDT_equity.csv
+out_ref/BTC_USDT_equity.png
+out_ref/BTC_USDT_signals.png

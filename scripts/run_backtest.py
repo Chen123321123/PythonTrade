@@ -182,7 +182,7 @@ def main():
         safe_sym = sym.replace("/", "_")
         fn_sig = os.path.join(args.out_dir, f"{safe_sym}_signals.png")
         plot_candle_signals(df_raw, df_ind, entry_times, exit_times, fn_sig)
-        print("✅", fn_sig)
+        print(fn_sig)
 
         # 5) backtest 模式下再画实际成交 & equity
         if args.mode == "backtest":
@@ -193,19 +193,19 @@ def main():
             real_x = res.dropna(subset=['exit_price']).index.tolist()
             fn_bt = os.path.join(args.out_dir, f"{safe_sym}_backtest.png")
             plot_candle_signals(df_raw, df_ind, real_e, real_x, fn_bt)
-            print("✅", fn_bt)
+            print(fn_bt)
 
             # equity CSV + PNG
             csv_eq = os.path.join(args.out_dir, f"{safe_sym}_equity.csv")
             res[['equity','drawdown']].to_csv(csv_eq)
-            print("📈", csv_eq)
+            print(csv_eq)
             png_eq = csv_eq.replace('.csv','.png')
             plt.figure(figsize=(10,4))
             plt.plot(res.index, res['equity'], linewidth=2)
             plt.title(f"{sym} Equity Curve")
             plt.ylabel("Equity"); plt.grid(True)
             plt.tight_layout(); plt.savefig(png_eq, dpi=150); plt.close()
-            print("✅", png_eq)
+            print(png_eq)
 
             # 配对交易明细
             trades, cur = [], None

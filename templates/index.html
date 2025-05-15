@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>量化回测 MVP</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
+    label { display: block; margin-top: 1rem; }
+    input, select { width: 100%; padding: .5rem; }
+    button { margin-top: 1.5rem; padding: .5rem 1rem; }
+    img { max-width: 100%; margin-top: 1rem; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>量化回测 MVP</h1>
+  <form id="form">
+    <label>Mode
+      <select name="mode">
+        <option value="plot">plot</option>
+        <option value="backtest" selected>backtest</option>
+      </select>
+    </label>
+    <label>Symbols
+      <input name="symbols" value="BTC/USDT">
+    </label>
+    <label>Timeframe
+      <input name="timeframe" value="4h">
+    </label>
+    <label>Limit
+      <input type="number" name="limit" value="300">
+    </label>
+    <label>Last N
+      <input type="number" name="last_n" value="100">
+    </label>
+    <!-- 你还可以继续加 window/mult 等，如果暂时固定也可以移除 -->
+    <button type="submit">Run Backtest</button>
+  </form>
+
+  <div id="result" style="display:none;">
+    <h2>结果</h2>
+    <p>Run ID: <span id="run_id"></span></p>
+    <img id="signals_img" alt="Signals">
+    <img id="backtest_img" alt="Backtest">
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+    const resultDiv = document.getElementById('result');
+    const runIdEl = document.getElementById('run_id');
+    const sigImg = document.getElementById('signals_img');
+    const btImg = document.getElementById('backtest_img');
+
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const formData = Object.fromEntries(new FormData(form).entries());
+        const data = {
+            mode: formData.mode,
+            symbols: formData.symbols,
+            timeframe: formData.timeframe,
+            limit:      parseInt(formData.limit, 10),
+            last_n:     parseInt(formData.last_n, 10),
+            window:     30,
+            mult:       2.0,
+            period:     15,
+            stop_loss:  0.05,
+            take_profit:0.10,
+            trailing_ma:"",
+            position_size:1.0,
+            strategy:      'bollinger_narrow',
+            children:      '',
+            comb_mode:     'and',
+            out_dir:       'out_api'
+        };
+
+      // 1) 调用 /run
+      const resp = await fetch('/run', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(data)
+      });
+      const { run_id, base } = await resp.json();
+
+      // 2) 拼 URL 并显示图片
+      runIdEl.textContent = run_id;
+      sigImg.src = `/results/${run_id}/BTC_USDT_signals.png?base=${base}`;
+      btImg.src  = `/results/${run_id}/BTC_USDT_backtest.png?base=${base}`;
+      resultDiv.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
