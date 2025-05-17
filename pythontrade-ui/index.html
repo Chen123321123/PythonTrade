@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PythonTrade UI</title>
+
+    <!-- ① 引入 Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ② 可选：配置 content 范围，避免加载全量样式 -->
+    <script>
+      tailwind.config = {
+        content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+        theme: { extend: {} },
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

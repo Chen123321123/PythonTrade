@@ -1,5 +1,6 @@
 # src/backend/core.py
 
+
 import os, time, importlib, inspect
 import pandas as pd, numpy as np
 import matplotlib
@@ -84,10 +85,10 @@ def plot_candle_signals(df_raw, df_ind, entry_times, exit_times, out_path):
     # 绘进出场
     if entry_times:
         lows = df_ind.loc[entry_times,'low'] * 0.995
-        ax.scatter(entry_times, lows, s=100, c='red',   marker='o', label='Entry')
+        ax.scatter(entry_times, lows, s=150, c='blue',   marker='o', label='Entry')
     if exit_times:
         highs= df_ind.loc[exit_times,'high'] * 1.005
-        ax.scatter(exit_times, highs, s=100, c='grey', marker='o', label='Exit')
+        ax.scatter(exit_times, highs, s=150, c='grey', marker='o', label='Exit')
 
     ax.legend(loc='upper left'); ax.grid(True)
 
@@ -172,12 +173,16 @@ def run_backtest_api(params: dict) -> dict:
     # 4) 遍历每个 symbol，执行流程
     results = {}
     for sym in params['symbols'].split(','):
-        # 4.1) 拉数据 & 截取最后 N 根
+        # 4.1) 拉数据
         df_full = fetch_ohlcv(sym, params['timeframe'], limit=params['limit'])
-        if params['last_n'] > 0:
-            df_raw = df_full.iloc[-params['last_n']:].copy()
-        else:
-            df_raw = df_full.copy()
+        print(f"[DEBUG] {sym} df_full: {len(df_full)} bars  "
+            f"{df_full.index[0]} → {df_full.index[-1]}", flush=True)
+
+        df_full = df_full.sort_index()
+        n = params['last_n'] if params['last_n'] > 0 else params['limit']
+        df_raw = df_full.tail(n).copy()
+        print(f"[DEBUG] {sym} df_raw (last_n={params['last_n']} → n={n}): "
+            f"{len(df_raw)} bars  {df_raw.index[0]} → {df_raw.index[-1]}", flush=True)
 
         # 4.2) 计算指标和信号
         df_ind        = strat.compute(df_raw)
