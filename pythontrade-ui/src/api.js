@@ -2,11 +2,25 @@
 import axios from 'axios';
 
 /**
+ * 获取交易对列表
+ * @returns {Promise<string[]>} 返回字符串数组，例如 ["BTC/USD", "ETH/USD", …]
+ */
+export function fetchSymbols() {
+  return axios
+    .get('/symbols')
+    .then(res => res.data)
+    .catch(err => {
+      console.error('获取 symbols 列表失败：', err);
+      throw err;
+    });
+}
+
+/**
  * 调用后端回测接口
  * @param {Object} params - 回测参数，示例结构：
  * {
  *   mode:          'backtest',
- *   symbols:       'BTC/USD',      // Kraken 支持的格式
+ *   symbols:       'BTC/USD',      
  *   timeframe:     '4h',
  *   limit:         300,
  *   last_n:        -1,
@@ -26,7 +40,7 @@ import axios from 'axios';
  */
 export function runBacktest(params) {
   return axios
-    .post('http://localhost:5000/run', params)
+    .post('/run_backtest', params)
     .then(res => res.data)
     .catch(err => {
       console.error('回测接口调用失败：', err);

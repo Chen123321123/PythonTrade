@@ -1,21 +1,26 @@
 // src/components/SymbolSelector.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { fetchSymbols } from '../api';   // 根据你的路径调整一下
 
 export function SymbolSelector({ value, onChange }) {
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // 启动后从后端获取可选 symbols
-    axios.get('http://localhost:5000/symbols')
-      .then(res => setOptions(res.data || []))
-      .catch(err => {
-        console.error('获取 symbols 失败', err);
-        setOptions([]);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+useEffect(() => {
+  setLoading(true)
+  fetchSymbols()
+    .then(list => {
+      console.log('拿到 symbols 列表：', list)
+      setOptions(list)
+    })
+    .catch(err => {
+      console.error('获取 symbols 失败', err)
+      setOptions([])
+    })
+    .finally(() => setLoading(false))
+}, [])
+
 
   if (loading) {
     return <div>加载币种列表中…</div>;

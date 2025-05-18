@@ -1,6 +1,9 @@
 import React from 'react';
 
 export function BacktestResult({ result, outDir }) {
+  
+  console.log('回测结果原始 payload:', result)
+
   const base = encodeURIComponent(outDir);
 
   // 中文映射和格式化逻辑
@@ -15,23 +18,25 @@ export function BacktestResult({ result, outDir }) {
     <div className="space-y-6 mt-6">
       <h2 className="text-xl font-bold">回测结果：{result.run_id}</h2>
       {Object.entries(result.results).map(([symbol, info]) => {
-        const sigFile = info.signals.split('\\').pop();
-        const btFile  = info.backtest?.split('\\').pop();
-        const eqFile  = info.equity_png?.split('\\').pop();
+        const filenameOf = path => path.replace(/^.*[\\/]/, '');
+
+        const sigFile = filenameOf(info.signals);
+        const btFile  = filenameOf(info.backtest || '');
+        const eqFile  = filenameOf(info.equity_png || '');//？？？
 
         return (
           <div key={symbol} className="border p-4 rounded">
             <h3 className="text-lg font-semibold mb-2">{symbol}</h3>
 
             <img
-              src={`http://localhost:5000/results/${result.run_id}/${sigFile}?base=${base}`}
+              src={`/results/${result.run_id}/${sigFile}?base=${base}`}
               alt={`${symbol} signals`}
               className="mb-4 w-full"
             />
 
             {btFile && (
               <img
-                src={`http://localhost:5000/results/${result.run_id}/${btFile}?base=${base}`}
+                src={`/results/${result.run_id}/${btFile}?base=${base}`}
                 alt={`${symbol} backtest`}
                 className="mb-4 w-full "
               />
@@ -39,7 +44,7 @@ export function BacktestResult({ result, outDir }) {
 
             {eqFile && (
               <img
-                src={`http://localhost:5000/results/${result.run_id}/${eqFile}?base=${base}`}
+                src={`/results/${result.run_id}/${eqFile}?base=${base}`}
                 alt={`${symbol} equity curve`}
                 className="mb-4 w-full"
               />

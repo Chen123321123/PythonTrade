@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState } from 'react';
-import { runBacktest }           from './api';
+import { runBacktest, fetchSymbols } from './api'
 import { StrategySelector }      from './components/StrategySelector';
 import { ParameterInput }        from './components/ParameterInput';
 import { BacktestResult }        from './components/BacktestResult';
